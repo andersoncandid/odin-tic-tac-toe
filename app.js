@@ -38,10 +38,8 @@ function player(name, mark) {
 
 // --- Game controler ---
 // Manage game assets and control the flow
-function game(playerOneName, playerTwoName) {
+const game = (() => {
   // Creating game assets
-  const playerOne = player(playerOneName, "x");
-  const playerTwo = player(playerTwoName, "o");
   const board = gameboard.getBoard();
   let nextPlayerTurn = 1;
 
@@ -94,10 +92,16 @@ function game(playerOneName, playerTwoName) {
     }
   };
   return {
-    playerOne,
-    playerTwo,
     getNextPlayer,
     takePlayerTurn,
     checkForWinner,
   };
-}
+})();
+
+//Intialize the game and DOM manipulation
+
+
+// const playerOne = player("playerOne", "x");
+// const playerTwo = player("playerTwo", "o");
+
+
