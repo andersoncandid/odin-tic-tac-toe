@@ -38,9 +38,11 @@ function player(name, mark) {
 
 // --- Game controler ---
 // Manage game assets and control the flow
-const game = ((playerOneName, playerTwoName) => {
+function game(playerOneName, playerTwoName) {
+  // Creating game assets
   const playerOne = player(playerOneName, "x");
   const playerTwo = player(playerTwoName, "o");
+  const board = gameboard.getBoard();
   let nextPlayerTurn = 1;
 
   const getNextPlayer = () => nextPlayerTurn;
@@ -57,31 +59,45 @@ const game = ((playerOneName, playerTwoName) => {
     }
   };
 
-  // Check if win condition is fulfilled
   const checkForWinner = () => {
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 3; col++) {
-        let cell = board[row][col];
-        let completeRow = true;
-        let completeCol = true;
-        let completeDiag1 = true;
-        let completeDiag2 = true;
-
-        // check for any complete diagonals
-        if (row === col && cell != bord[0][0]) {
-          completeDiag = false;
-        }
-
-        // check for any complete row
-        if (cell != board[row][0]) {
-          completeRow = false;
-        }
-        // check for any complete column
-        if (cell != board[0][col]) {
-          completeCol = false;
-        }
-        return cell;
+    for (let i = 0; i < 3; i++) {
+      // Check the rows
+      if (
+        board[i][0] === board[i][1] &&
+        board[i][0] === board[i][2] &&
+        board[i][0] != ""
+      ) {
+        return board[i][0];
+      }
+      // Check the colunms
+      if (
+        board[0][i] === board[1][i] &&
+        board[0][i] === board[2][i] &&
+        board[0][i] != ""
+      ) {
+        return board[0][i];
       }
     }
+    // Check the diagonals
+    if (
+      board[0][0] === board[1][1] &&
+      board[0][0] === board[2][2] &&
+      board[0][0] != ""
+    ) {
+      return board[0][0];
+    } else if (
+      board[0][2] === board[1][1] &&
+      board[0][2] === board[2][0] &&
+      board[0][2] != ""
+    ) {
+      return board[0][2];
+    }
   };
-})();
+  return {
+    playerOne,
+    playerTwo,
+    getNextPlayer,
+    takePlayerTurn,
+    checkForWinner,
+  };
+}
