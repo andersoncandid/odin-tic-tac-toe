@@ -1,4 +1,4 @@
-// --- Gameboard ---
+// --- Gameboard ---//
 // Create and update the state of the board
 const gameboard = (() => {
   const board = [
@@ -17,7 +17,7 @@ const gameboard = (() => {
   return { getBoard, updateBoard };
 })();
 
-// --- Players ---
+// --- Players ---//
 // Manage the data of the Players
 function player(name, mark) {
   let wins = 0;
@@ -36,24 +36,24 @@ function player(name, mark) {
   return { name, mark, updateScore, getScore };
 }
 
-// --- Game controler ---
+// --- Game controler ---//
 // Manage game assets and control the flow
 const game = (() => {
   // Creating game assets
   const board = gameboard.getBoard();
   let nextPlayerTurn = 1;
 
-  const getNextPlayer = () => nextPlayerTurn;
+  const getPlayerTurn = () => nextPlayerTurn;
 
   // Control of game actions
-  const takePlayerTurn = (row, column, player) => {
-    gameboard.updateBoard(row, column, player.mark);
-
-    // Change the active player order
+  const takePlayerTurn = (row, column) => {
+    // Updates the board according to the active player
     if (nextPlayerTurn === 1) {
       nextPlayerTurn = 2;
+      gameboard.updateBoard(row, column, playerOne.mark);
     } else {
       nextPlayerTurn = 1;
+      gameboard.updateBoard(row, column, playerTwo.mark);
     }
   };
 
@@ -90,18 +90,80 @@ const game = (() => {
     ) {
       return board[0][2];
     }
+    // Check for draw condition
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (board[i][j] === "") {
+          return;
+        }
+      }
+    }
+    return "draw";
   };
   return {
-    getNextPlayer,
+    getPlayerTurn,
     takePlayerTurn,
     checkForWinner,
   };
 })();
 
-//Intialize the game and DOM manipulation
+//--- DOM manipulation ---//
+function addMarkImg(playerMark, markSrc, cellId) {
+  const mark = document.createElement("img");
+  mark.alt = playerMark;
+  mark.classList.add(playerMark);
+  mark.src = markSrc;
+  document.getElementById(cellId).appendChild(mark);
+}
 
+//Intialize the game
+const startBtn = document.getElementById("btn-start");
+const boardContainer = document.querySelector(".board-container");
+let playerOne = null;
+let playerTwo = null;
 
-// const playerOne = player("playerOne", "x");
-// const playerTwo = player("playerTwo", "o");
+startBtn.addEventListener("click", () => {
+  const playerOneName = prompt("Enter player One name:");
+  const playerTwoName = prompt("Enter player Two name:");
 
+  // Create players and defines their marks
+  // Player One = x (cross)
+  // Player Two = o (circle)
+  playerOne = player(playerOneName, "x");
+  playerTwo = player(playerTwoName, "o");
 
+  startBtn.style.display = "none";
+  boardContainer.style.display = "block";
+});
+
+// Game flow feedback
+const board = document.querySelector(".board");
+
+board.addEventListener("click", (event) => {
+  const target = event.target;
+
+  // Ensure that the clicked cell is unmarked.
+  if (target.tagName === "IMG" || target.childElementCount != 0) {
+    return;
+  }
+
+  const coordinates = target.id.split("");
+  let winner = "";
+
+  if (game.getPlayerTurn() === 1) {
+    addMarkImg("cross", "/img/cross.svg", target.id);
+  } else if (game.getPlayerTurn() === 2) {
+    addMarkImg("circle", "/img/circle.svg", target.id);
+  }
+  game.takePlayerTurn(coordinates[1], coordinates[3]);
+  winner = game.checkForWinner();
+  setTimeout(() => {
+    if (winner === "x") {
+      alert("Winner is: " + playerOne.name);
+    } else if (winner === "o") {
+      alert("Winner is: " + playerTwo.name);
+    } else if (winner === "draw") {
+      alert("Draw");
+    }
+  }, 100);
+});
