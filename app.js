@@ -151,9 +151,9 @@ board.addEventListener("click", (event) => {
   let winner = "";
 
   if (game.getPlayerTurn() === 1) {
-    addMarkImg("cross", "/img/cross.svg", target.id);
+    addMarkImg("cross", "img/cross.svg", target.id);
   } else if (game.getPlayerTurn() === 2) {
-    addMarkImg("circle", "/img/circle.svg", target.id);
+    addMarkImg("circle", "img/circle.svg", target.id);
   }
   game.takePlayerTurn(coordinates[1], coordinates[3]);
   winner = game.checkForWinner();
